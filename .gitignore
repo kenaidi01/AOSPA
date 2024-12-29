@@ -149,3 +149,5 @@ build.sh
 build.sh:Zone.Identifier
 out/
 *.zip
+/arch/arm64/configs/vendor/
+/AnyKernel3/
