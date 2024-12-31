@@ -148,3 +148,4 @@ build.log
 build.sh
 build.sh:Zone.Identifier
 out/
+*.zip
