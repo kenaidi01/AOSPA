@@ -144,3 +144,7 @@ kernel/configs/android-*.cfg
 scripts/build_dtbo
 scripts/build_kernel
 scripts/update_defconfig
+build.log
+build.sh
+build.sh:Zone.Identifier
+out/
