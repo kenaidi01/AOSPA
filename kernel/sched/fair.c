@@ -178,10 +178,11 @@ unsigned int sysctl_sched_cfs_bandwidth_slice		= 5000UL;
  * (default: ~20%)
  */
 unsigned int capacity_margin				= 1280;
-unsigned int sched_capacity_margin_up[CPU_NR] = {
-			[0 ... CPU_NR-1] = 1078}; /* ~5% margin */
-unsigned int sched_capacity_margin_down[CPU_NR] = {
-			[0 ... CPU_NR-1] = 1205}; /* ~15% margin */
+unsigned int sched_capacity_margin_up[NR_CPUS] = {
+			[0 ... NR_CPUS-1] = 1078}; /* ~5% margin */
+unsigned int sched_capacity_margin_down[NR_CPUS] = {
+			[0 ... NR_CPUS-1] = 1205}; /* ~15% margin */
+
 #ifdef CONFIG_SCHED_WALT
 /* 1ms default for 20ms window size scaled to 1024 */
 unsigned int sysctl_sched_min_task_util_for_boost = 51;
@@ -4009,7 +4010,8 @@ static inline bool task_fits_capacity(struct task_struct *p,
 	unsigned int margin;
 
 	/*
-	 * Derive upmigration/downmigrate margin wrt the src/dest CPU.
+	 * Derive upmigration/downmigrate margin wrt the src/dest
+	 * CPU.
 	 */
 	if (capacity_orig_of(task_cpu(p)) > capacity_orig_of(cpu))
 		margin = sched_capacity_margin_down[cpu];
@@ -4030,9 +4032,9 @@ static inline bool task_fits_max(struct task_struct *p, int cpu)
 
 	if (is_min_capacity_cpu(cpu)) {
 		if (task_boost_policy(p) == SCHED_BOOST_ON_BIG ||
-				task_boost > 0 ||
-				uclamp_boosted(p) ||
-				walt_should_kick_upmigrate(p, cpu))
+			task_boost > 0 ||
+			schedtune_task_boost(p) > 0 ||
+			walt_should_kick_upmigrate(p, cpu))
 			return false;
 	} else { /* mid cap cpu */
 		if (task_boost > TASK_BOOST_ON_MID)
